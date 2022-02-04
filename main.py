@@ -1,4 +1,4 @@
-#! usr/bin/python
+#! usr/bin/python3.8
 import pygame
 from models import Player, Enemy
 
@@ -53,6 +53,14 @@ while running:
 	player_group.draw(screen)
 	enemy_group.draw(screen)
 
+	# check for collision
+	# this returns a dict
+	if pygame.sprite.groupcollide(enemy_group, player_group, False, False):
+		player.damage(1)
+
+	# TODO make check if the attack rect is htting the enemey rect and damage enemies
+	
+
 	# these stay at bottom of loop
 	pygame.display.update()
-	clock.tick(30) 
+	clock.tick(20) 

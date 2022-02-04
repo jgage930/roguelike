@@ -1,3 +1,4 @@
+from turtle import Turtle
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -7,7 +8,7 @@ class Player(pygame.sprite.Sprite):
 		# screen to draw shapes for now
 		self.screen = screen
 
-		# load images
+		# load walking images
 		self.walkup_images = []
 		for i in range(5, 10):
 			image = pygame.image.load(f'/home/jgage/Documents/Projects/roguelike/art/player/walk_up/tile00{i}.png')
@@ -28,11 +29,17 @@ class Player(pygame.sprite.Sprite):
 			image = pygame.image.load(f'/home/jgage/Documents/Projects/roguelike/art/player/walk_right/tile0{i}.png')
 			self.walkright_images.append(image)
 
+		# load attack images
+		self.attack_up_image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/player/attack/attack_up.png')
+		self.attack_down_image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/player/attack/attack_down.png')
+		self.attack_right_image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/player/attack/attack_right.png')
+		self.attack_left_image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/player/attack/attack_left.png')
+
 		# image to display
 		self.image = self.walkup_images[0]
 		self.image = pygame.transform.scale(self.image, (70, 70))
 
-		# rect
+		# hurt box
 		self.rect = self.image.get_rect()
 
 		# postion
@@ -56,6 +63,15 @@ class Player(pygame.sprite.Sprite):
 		# attacking variable
 		self.attacking = False
 
+		# check if holding space
+		self.hold_space = False
+
+		# hit box 
+		self.hit_box = None
+
+		# health
+		self.health = 10
+
 	def set_dir(self, dirs:str):
 		"""Sets the direction the player is facing"""
 		self.dir[dirs] = True
@@ -70,6 +86,7 @@ class Player(pygame.sprite.Sprite):
 	def handle_keys(self):
 		"""Moves player"""
 		self.attacking = False
+
 		keys = pygame.key.get_pressed()
 
 		if keys[pygame.K_w]:
@@ -105,8 +122,11 @@ class Player(pygame.sprite.Sprite):
 			if self.x <= 1000 - self.speed:
 				self.x += self.speed
 
-		if keys[pygame.K_SPACE]:
+		if keys[pygame.K_SPACE] and not self.hold_space:
 			self.attacking = True
+			self.hold_space = True
+		else:
+			self.hold_space = False
 
 		self.rect.center = (self.x, self.y)
 
@@ -115,6 +135,7 @@ class Player(pygame.sprite.Sprite):
 
 	def attack(self):
 		# draws a rectangle in the direction  the player is attacking this will be used to set the hitbox
+		# and sets the hitbox accordingly
 		color = (255, 0, 0)
 
 		if self.dir['d']:
@@ -123,6 +144,10 @@ class Player(pygame.sprite.Sprite):
 
 			x = self.x - 35 # width / 2
 			y = self.y + 35 + h
+			
+			self.image = self.attack_down_image
+
+			self.hit_box = pygame.Rect(x, y, w, h)
 			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 		if self.dir['r']:
@@ -131,6 +156,10 @@ class Player(pygame.sprite.Sprite):
 
 			x = self.x + 35
 			y = self.y - 35
+
+			self.image = self.attack_right_image
+
+			self.hit_box = pygame.Rect(x, y, w, h)
 			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 		if self.dir['l']:
@@ -139,6 +168,10 @@ class Player(pygame.sprite.Sprite):
 
 			x = self.x - 70
 			y = self.y - 35
+
+			self.image = self.attack_left_image
+
+			self.hit_box = pygame.Rect(x, y, w, h)
 			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 		if self.dir['u']:
@@ -147,10 +180,15 @@ class Player(pygame.sprite.Sprite):
 
 			x = self.x - 35
 			y = self.y - 35 - h
+
+			self.image = self.attack_up_image
+
+			self.hit_box = pygame.Rect(x, y, w, h)
 			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 	def update(self):
 		# get direction
+		print(self.health)
 		dir = self.get_dir()
 
 		if dir['u']:
@@ -181,14 +219,21 @@ class Player(pygame.sprite.Sprite):
 				self.index = 0
 
 			self.image = self.walkdown_images[self.index]
-
-		self.image = pygame.transform.scale(self.image, (70, 70))
 		
 		# check if attacking
 		if self.attacking:
 			self.attack()
+		else:
+			# reset hit box when player is not attacking
+			self.hit_box = None
 
-		print(self.attacking)
+		self.image = pygame.transform.scale(self.image, (70, 70))
+
+	def get_hitbox(self):
+		return self.hit_box()
+
+	def damage(self, amount:int):
+		self.health -= amount
 
 class Enemy(pygame.sprite.Sprite):
 
