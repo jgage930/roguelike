@@ -50,7 +50,7 @@ class Player(pygame.sprite.Sprite):
 		self.h = 50
 
 		# speed
-		self.speed = 8
+		self.speed = 10
 
 		# direction 
 		self.dir = dict.fromkeys(['u', 'd', 'l', 'r'], False)
@@ -145,7 +145,7 @@ class Player(pygame.sprite.Sprite):
 
 		if self.dir['d']:
 			w = 70
-			h = 20
+			h = 40
 
 			x = self.x - 35 # width / 2
 			y = self.y + 35 + h
@@ -153,10 +153,9 @@ class Player(pygame.sprite.Sprite):
 			self.image = self.attack_down_image
 
 			self.hit_box = pygame.Rect(x, y, w, h)
-			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 		if self.dir['r']:
-			w = 20
+			w = 40
 			h = 70
 
 			x = self.x + 35
@@ -165,10 +164,9 @@ class Player(pygame.sprite.Sprite):
 			self.image = self.attack_right_image
 
 			self.hit_box = pygame.Rect(x, y, w, h)
-			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 		if self.dir['l']:
-			w = 20
+			w = 40
 			h = 70
 
 			x = self.x - 70
@@ -177,11 +175,10 @@ class Player(pygame.sprite.Sprite):
 			self.image = self.attack_left_image
 
 			self.hit_box = pygame.Rect(x, y, w, h)
-			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 		if self.dir['u']:
 			w = 70
-			h = 20
+			h = 40
 
 			x = self.x - 35
 			y = self.y - 35 - h
@@ -189,11 +186,9 @@ class Player(pygame.sprite.Sprite):
 			self.image = self.attack_up_image
 
 			self.hit_box = pygame.Rect(x, y, w, h)
-			pygame.draw.rect(self.screen, color, (x, y, w, h))
 
 	def update(self):
 		# get direction
-		print(self.wealth)
 		dir = self.get_dir()
 
 		if dir['u']:

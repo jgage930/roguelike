@@ -98,7 +98,6 @@ while running:
 		player_hitbox = player.get_hitbox()
 		if player_hitbox is not None:
 			if pygame.Rect.colliderect(enemy.rect, player_hitbox):
-				print("hit")
 				enemy.damage(1)
 
 		# check if the enemy is dead
