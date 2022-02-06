@@ -24,9 +24,9 @@ player = Player((500, 500), screen)
 player_group = pygame.sprite.Group(player)
 
 # Enemies
-enemy1 = Enemy((100, 100))
-enemy2 = Enemy((400, 100))
-enemy3 = Enemy((800, 800))
+enemy1 = Enemy((100, 100), screen)
+enemy2 = Enemy((400, 100), screen)
+enemy3 = Enemy((800, 800), screen)
 enemy_group = pygame.sprite.Group()
 enemy_group.add(enemy1)
 enemy_group.add(enemy2)
@@ -59,6 +59,18 @@ while running:
 		player.damage(1)
 
 	# TODO make check if the attack rect is htting the enemey rect and damage enemies
+	for enemy in enemy_group:
+		player_hitbox = player.get_hitbox()
+		if player_hitbox is not None:
+			if pygame.Rect.colliderect(enemy.rect, player_hitbox):
+				print("hit")
+				enemy.damage(1)
+
+		# check if the enemy is dead
+		if enemy.get_health() <= 0:
+			enemy_group.remove(enemy)
+
+	
 	
 
 	# these stay at bottom of loop

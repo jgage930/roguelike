@@ -1,4 +1,3 @@
-from turtle import Turtle
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -70,7 +69,7 @@ class Player(pygame.sprite.Sprite):
 		self.hit_box = None
 
 		# health
-		self.health = 10
+		self.health = 100
 
 	def set_dir(self, dirs:str):
 		"""Sets the direction the player is facing"""
@@ -229,16 +228,26 @@ class Player(pygame.sprite.Sprite):
 
 		self.image = pygame.transform.scale(self.image, (70, 70))
 
+		# draw health bar
+		pygame.draw.rect(self.screen, (255, 0, 0), (20, 900, self.health * 5, 30))
+
 	def get_hitbox(self):
-		return self.hit_box()
+		return self.hit_box
 
 	def damage(self, amount:int):
 		self.health -= amount
 
+	def get_health(self):
+		return self.health
+
 class Enemy(pygame.sprite.Sprite):
 
-	def __init__(self, start: tuple):
+	def __init__(self, start: tuple, screen):
 		super().__init__()
+
+		self.x, self.y = start
+
+		self.screen = screen
 
 		self.image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/enemies/spider.png')
 
@@ -249,6 +258,9 @@ class Enemy(pygame.sprite.Sprite):
 		self.rect.center = start
 
 		self.speed = 2
+
+		# health and health bar
+		self.health = 10
 
 	def update(self, target:tuple):
 		"""Moves the enemy towards the target"""
@@ -268,4 +280,12 @@ class Enemy(pygame.sprite.Sprite):
 			self.y -= self.speed
 
 		self.rect.center = (self.x, self.y)
+
+		pygame.draw.rect(self.screen, (255, 0, 0), (self.x - 15, self.y - 20, self.health * 5, 8))
+
+	def damage(self, amount:int):
+		self.health -= amount
+
+	def get_health(self):
+		return self.health
 
