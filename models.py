@@ -1,3 +1,4 @@
+from pickle import FALSE
 import pygame
 
 class Player(pygame.sprite.Sprite):
@@ -70,6 +71,11 @@ class Player(pygame.sprite.Sprite):
 
 		# health
 		self.health = 100
+
+		# track wealth
+		self.wealth = 0
+		self.coin_image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/coin/coin.png')
+
 
 	def set_dir(self, dirs:str):
 		"""Sets the direction the player is facing"""
@@ -187,7 +193,7 @@ class Player(pygame.sprite.Sprite):
 
 	def update(self):
 		# get direction
-		print(self.health)
+		print(self.wealth)
 		dir = self.get_dir()
 
 		if dir['u']:
@@ -228,8 +234,7 @@ class Player(pygame.sprite.Sprite):
 
 		self.image = pygame.transform.scale(self.image, (70, 70))
 
-		# draw health bar
-		pygame.draw.rect(self.screen, (255, 0, 0), (20, 900, self.health * 5, 30))
+		self.draw_hud()
 
 	def get_hitbox(self):
 		return self.hit_box
@@ -239,6 +244,20 @@ class Player(pygame.sprite.Sprite):
 
 	def get_health(self):
 		return self.health
+
+	def add_wealth(self):
+		self.wealth += 1
+
+	def draw_hud(self):
+		# draw health bar
+		pygame.draw.rect(self.screen, (255, 0, 0), (20, 900, self.health * 5, 30))
+
+		# coins
+		self.screen.blit(self.coin_image, (10, 940))
+		myfont = pygame.font.SysFont("Comic Sans MS", 30)
+		text = myfont.render(f"x {self.wealth}", FALSE, (0, 0, 0))
+		self.screen.blit(text, (30, 940))
+
 
 class Enemy(pygame.sprite.Sprite):
 
@@ -289,3 +308,20 @@ class Enemy(pygame.sprite.Sprite):
 	def get_health(self):
 		return self.health
 
+class Coin(pygame.sprite.Sprite):
+
+	def __init__(self, start:tuple) -> None:
+		super().__init__()
+		
+		self.x, self.y = start
+
+		self.image = pygame.image.load('/home/jgage/Documents/Projects/roguelike/art/coin/coin.png')
+
+		self.rect = self.image.get_rect()
+
+		self.rect.center = self.x, self.y
+
+		self.value = 1
+
+	def update(self) -> None:
+		pass
